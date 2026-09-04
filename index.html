@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Landscape Travel - تسجيل الدخول</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #001f54 0%, #003399 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .login-card {
+      background-color: #ffffff;
+      padding: 35px 30px;
+      border-radius: 20px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+      border-top: 6px solid #dc2626;
+    }
+
+    /* حاوية اللوجو الدائرية المأخوذة بنفس إعدادات صفحة المعتمرين */
+    .logo-container {
+      width: 100px;
+      height: 100px;
+      margin: 0 auto 15px auto;
+      border-radius: 50%;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      border: 3px solid #003399;
+      background: #ffffff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 6px;
+    }
+
+    /* تنسيق اللوجو المضبوط لمنع القص أو التمطيط */
+    .logo-img {
+      width: 100%;
+      height: 100%;
+      object-fit: scale-down;
+      display: block;
+    }
+
+    .login-card h2 {
+      margin: 0 0 5px 0;
+      color: #003399;
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+
+    .sub-title {
+      color: #64748b;
+      font-size: 0.9rem;
+      margin-bottom: 25px;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+      text-align: right;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 6px;
+      color: #1e293b;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1.5px solid #cbd5e1;
+      background-color: #f8fafc;
+      color: #0f172a;
+      font-size: 1rem;
+      outline: none;
+      transition: all 0.2s;
+    }
+
+    .form-group input:focus {
+      border-color: #003399;
+      background-color: #ffffff;
+      box-shadow: 0 0 0 3px rgba(0, 51, 153, 0.15);
+    }
+
+    .btn {
+      width: 100%;
+      padding: 13px;
+      background: linear-gradient(135deg, #003399 0%, #002266 100%);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 1.05rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .btn:disabled {
+      background: #94a3b8;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    #message {
+      margin-top: 15px;
+      font-size: 0.9rem;
+      padding: 10px;
+      border-radius: 8px;
+      display: none;
+    }
+
+    .error {
+      background-color: #fee2e2;
+      color: #dc2626;
+      border: 1px solid #fca5a5;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="login-card">
+    <!-- حاوية اللوجو -->
+    <div class="logo-container">
+      <img src="logo.jpeg" alt="Landscape Travel Logo" class="logo-img">
+    </div>
+    
+    <h2>لاند سكيب للسياحة</h2>
+    <div class="sub-title">نظام إدارة خدمات العمرة</div>
+
+    <form id="loginForm">
+      <div class="form-group">
+        <label>كود الموظف / اسم المستخدم</label>
+        <input type="text" id="username" placeholder="أدخل اسم المستخدم" required autocomplete="off">
+      </div>
+      <div class="form-group">
+        <label>كلمة السر</label>
+        <input type="password" id="password" placeholder="أدخل كلمة السر" required>
+      </div>
+      <button type="submit" class="btn" id="submitBtn">تسجيل الدخول</button>
+      <div id="message"></div>
+    </form>
+  </div>
+
+ <script>
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwW396htaIhGE_7GRvGnLBeWG6dxuSWjgP8A-6u9dlrFr3q9sD3_iNr-cIYNwA2FNjYFg/exec";
+
+    const form = document.getElementById('loginForm');
+    const messageDiv = document.getElementById('message');
+    const submitBtn = document.getElementById('submitBtn');
+
+    // Callback function لتلقي الاستجابة عبر JSONP
+    window.handleLoginResponse = function(data) {
+      submitBtn.disabled = false;
+      submitBtn.innerText = "تسجيل الدخول";
+      
+      if(data.status === 'success') {
+        localStorage.setItem("empCode", data.user);
+        localStorage.setItem("empName", data.name);
+        localStorage.setItem("role", data.role);
+        window.location.href = "dashboard.html";
+      } else {
+        messageDiv.className = "error";
+        messageDiv.innerText = data.message || "اسم المستخدم أو كلمة السر غير صحيحة";
+        messageDiv.style.display = "block";
+      }
+    };
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      submitBtn.disabled = true;
+      submitBtn.innerText = "جاري التحقق...";
+      messageDiv.style.display = "none";
+
+      const usernameInput = document.getElementById('username').value.trim();
+      const passwordInput = document.getElementById('password').value.trim();
+
+      // إنشاء عنصر script ديناميكي لتفادي حظر CORS
+      const oldScript = document.getElementById('jsonpScript');
+      if(oldScript) oldScript.remove();
+
+      const script = document.createElement('script');
+      script.id = 'jsonpScript';
+      script.src = `${GOOGLE_SCRIPT_URL}?action=login&username=${encodeURIComponent(usernameInput)}&password=${encodeURIComponent(passwordInput)}&callback=handleLoginResponse`;
+      
+      script.onerror = function() {
+        submitBtn.disabled = false;
+        submitBtn.innerText = "تسجيل الدخول";
+        messageDiv.className = "error";
+        messageDiv.innerText = "حدث خطأ في الاتصال، حاول مرة أخرى.";
+        messageDiv.style.display = "block";
+      };
+
+      document.body.appendChild(script);
+    });
+  </script>
+</body>
+</html>

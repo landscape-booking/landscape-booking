@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Landscape Travel - لوحة التحكّم</title>
+  <style>
+    :root {
+      --primary: #003399;
+      --secondary: #dc2626;
+      --bg: #f1f5f9;
+      --card-bg: #ffffff;
+      --text: #0f172a;
+    }
+    * { box-sizing: border-box; }
+    body { 
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+      background: var(--bg); 
+      color: var(--text); 
+      padding: 20px; 
+      margin: 0; 
+    }
+    .container { max-width: 1100px; margin: 0 auto; }
+    
+    .header { 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center; 
+      background: var(--card-bg); 
+      padding: 15px 25px; 
+      border-radius: 16px; 
+      margin-bottom: 20px; 
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      border-right: 6px solid var(--primary);
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+    .brand-section {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    .logo-dash {
+      width: 55px;
+      height: 55px;
+      object-fit: cover;
+      border-radius: 50%;
+      background: #fff;
+      border: 2px solid var(--primary);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .brand-title h2 { margin: 0; font-size: 1.2rem; color: var(--primary); }
+    .brand-title p { margin: 2px 0 0 0; font-size: 0.85rem; color: #64748b; }
+
+    /* الزر المصمم بتصميم جديد واحترافي */
+    .toggle-records-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: linear-gradient(135deg, #003399 0%, #001f54 100%);
+      color: #ffffff;
+      border: 1.5px solid #002266;
+      padding: 10px 20px;
+      border-radius: 30px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      font-weight: 700;
+      box-shadow: 0 4px 12px rgba(0, 51, 153, 0.25);
+      transition: all 0.3s ease;
+    }
+    .toggle-records-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(0, 51, 153, 0.35);
+      background: linear-gradient(135deg, #002266 0%, #001133 100%);
+    }
+    .toggle-records-btn.active {
+      background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+      border-color: #991b1b;
+      box-shadow: 0 4px 12px rgba(220, 38, 38, 0.25);
+    }
+
+    .btn { 
+      background: linear-gradient(135deg, var(--primary) 0%, #002266 100%); 
+      color: white; 
+      border: none; 
+      padding: 12px 20px; 
+      border-radius: 10px; 
+      cursor: pointer; 
+      font-weight: bold; 
+      font-size: 1rem;
+      transition: transform 0.2s;
+    }
+    .btn:hover { transform: translateY(-1px); }
+
+    .card { 
+      background: var(--card-bg); 
+      padding: 25px; 
+      border-radius: 16px; 
+      margin-bottom: 25px; 
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+    .card h3 {
+      margin-top: 0;
+      color: var(--primary);
+      border-bottom: 2px solid #e2e8f0;
+      padding-bottom: 10px;
+    }
+
+    .grid-form { 
+      display: grid; 
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); 
+      gap: 15px; 
+      margin-top: 15px; 
+    }
+    .form-group { display: flex; flex-direction: column; text-align: right; }
+    .form-group label { margin-bottom: 6px; font-size: 0.85rem; color: #475569; font-weight: 600; }
+    .form-group input, .form-group select { 
+      padding: 11px; 
+      border-radius: 8px; 
+      border: 1.5px solid #cbd5e1; 
+      background: #f8fafc; 
+      color: #0f172a; 
+      outline: none; 
+    }
+    .form-group input:focus, .form-group select:focus {
+      border-color: var(--primary);
+      background: #fff;
+    }
+
+    .table-container { 
+      overflow-x: auto; 
+      background: var(--card-bg); 
+      border-radius: 16px; 
+      padding: 20px; 
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      margin-top: 20px;
+    }
+    table { width: 100%; border-collapse: collapse; text-align: right; }
+    th, td { padding: 12px; border-bottom: 1px solid #e2e8f0; font-size: 0.9rem; }
+    th { background: #f8fafc; color: var(--primary); font-weight: 700; }
+
+    /* تنسيقات حقول جدول السجلات */
+    table input, table select {
+      width: 100%;
+      padding: 6px 8px;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      background: #fff;
+    }
+
+    /* ألوان حالات المعتمر */
+    tr.status-حجز { background-color: #f0fdf4; }
+    tr.status-مش-مهتم { background-color: #fef2f2; }
+    tr.status-مؤجل, tr.status-هيفكر { background-color: #fefce8; }
+
+    input:disabled, select:disabled { 
+      opacity: 0.9; 
+      border: none; 
+      background: transparent; 
+      color: inherit; 
+      box-shadow: none;
+    }
+    .edit-btn { background: #f59e0b; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-weight: bold; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <!-- الهيدر مع اللوجو واسم الموظف والزر الجديد -->
+  <div class="header">
+    <div class="brand-section">
+      <img src="logo.jpeg" alt="Landscape Travel Logo" class="logo-dash">
+      <div class="brand-title">
+        <h2>Landscape Travel</h2>
+        <p>أهلاً بك، <span id="empNameDisplay">الموظف</span></p>
+      </div>
+    </div>
+
+    <!-- زر عرض وإخفاء السجلات بالتصميم الجديد -->
+    <button class="toggle-records-btn" id="toggleBtn" onclick="toggleView()">
+      <span>👁️</span> <span id="toggleText">عرض السجلات</span>
+    </button>
+  </div>
+
+  <!-- 1. استمارة إضافة معتمر -->
+  <div class="card" id="formCard">
+    <h3>إضافة معتمر جديد</h3>
+    <form id="leadForm">
+      <div class="grid-form">
+        <div class="form-group"><label>اسم المعتمر</label><input type="text" id="clientName" required></div>
+        <div class="form-group"><label>رقم الهاتف</label><input type="tel" id="clientPhone" required></div>
+        <div class="form-group"><label>العنوان</label><input type="text" id="clientAddress" required></div>
+        <div class="form-group">
+          <label>حالة الحجز</label>
+          <select id="status">
+            <option value="حجز">حجز</option>
+            <option value="مؤجل">مؤجل</option>
+            <option value="هيفكر">هيفكر</option>
+            <option value="مش مهتم">مش مهتم</option>
+          </select>
+        </div>
+        <div class="form-group"><label>تاريخ الاتصال</label><input type="date" id="callDate" required></div>
+        <div class="form-group"><label>فيدباك 1</label><input type="text" id="fb1"></div>
+        <div class="form-group"><label>فيدباك 2</label><input type="text" id="fb2"></div>
+        <div class="form-group"><label>فيدباك 3</label><input type="text" id="fb3"></div>
+      </div>
+      <button type="submit" class="btn" id="saveBtn" style="margin-top: 20px; width: 100%;">حفظ المعتمر</button>
+    </form>
+  </div>
+
+  <!-- 2. جدول عرض السجلات -->
+  <div class="table-container" id="tableCard" style="display: none;">
+    <h3>سجلات المعتمرين</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>اسم المعتمر</th>
+          <th>الهاتف</th>
+          <th>العنوان</th>
+          <th>الحالة</th>
+          <th>تاريخ الاتصال</th>
+          <th>الملاحظات / فيدباك</th>
+          <th>إجراء</th>
+        </tr>
+      </thead>
+      <tbody id="leadsTableBody">
+        <!-- البيانات بـ JavaScript -->
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+  // استبدل هذا الرابط بـ رابط تطبيق الويب الخاص بك بعد النشر الجديد
+  const API_URL = "https://script.google.com/macros/s/AKfycbwW396htaIhGE_7GRvGnLBeWG6dxuSWjgP8A-6u9dlrFr3q9sD3_iNr-cIYNwA2FNjYFg/exec";
+
+  const currentEmpCode = localStorage.getItem("empCode") || ""; 
+  const currentRole = localStorage.getItem("role") || "موظف";
+
+  document.getElementById("empNameDisplay").innerText = localStorage.getItem("empName") || currentEmpCode;
+
+  // الاستدعاء العام باستخدام JSONP لتجنب CORS
+  function callAPI(params, callbackName) {
+    const script = document.createElement('script');
+    script.src = `${API_URL}?${params}&callback=${callbackName}`;
+    document.body.appendChild(script);
+  }
+
+  // عند حفظ المعتمر
+  document.getElementById("leadForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+    
+    const saveBtn = document.getElementById("saveBtn");
+    saveBtn.disabled = true;
+    saveBtn.innerText = "جاري الحفظ...";
+
+    window.handleAddResponse = function(res) {
+      saveBtn.disabled = false;
+      saveBtn.innerText = "حفظ المعتمر";
+      if(res.status === 'success') {
+        alert("تم حفظ المعتمر بنجاح!");
+        document.getElementById("leadForm").reset();
+        loadLeads();
+      } else {
+        alert("حدث خطأ: " + res.message);
+      }
+    };
+
+    const params = new URLSearchParams({
+      action: "addLead",
+      empCode: currentEmpCode,
+      clientName: document.getElementById("clientName").value,
+      clientPhone: document.getElementById("clientPhone").value,
+      clientAddress: document.getElementById("clientAddress").value,
+      status: document.getElementById("status").value,
+      callDate: document.getElementById("callDate").value,
+      fb1: document.getElementById("fb1").value,
+      fb2: document.getElementById("fb2").value,
+      fb3: document.getElementById("fb3").value
+    }).toString();
+
+    callAPI(params, "handleAddResponse");
+  });
+
+  // جلب السجلات للجدول
+  function loadLeads() {
+    window.handleGetLeads = function(res) {
+      const tbody = document.getElementById("leadsTableBody");
+      tbody.innerHTML = "";
+      
+      if (res.data && res.data.length > 0) {
+        res.data.forEach(item => {
+          const cleanStatus = item.status ? item.status.replace(/\s+/g, "-") : "";
+          const tr = document.createElement("tr");
+          tr.className = `status-${cleanStatus}`;
+          
+          tr.innerHTML = `
+            <td><input type="text" value="${item.name || ''}" id="name-${item.rowId}" disabled></td>
+            <td><input type="text" value="${item.phone || ''}" id="phone-${item.rowId}" disabled></td>
+            <td><input type="text" value="${item.address || ''}" id="address-${item.rowId}" disabled></td>
+            <td>
+              <select id="status-${item.rowId}" disabled>
+                <option ${item.status==='حجز'?'selected':''}>حجز</option>
+                <option ${item.status==='مؤجل'?'selected':''}>مؤجل</option>
+                <option ${item.status==='هيفكر'?'selected':''}>هيفكر</option>
+                <option ${item.status==='مش مهتم'?'selected':''}>مش مهتم</option>
+              </select>
+            </td>
+            <td><input type="date" value="${item.callDate || ''}" id="date-${item.rowId}" disabled></td>
+            <td>
+              <input type="text" value="${item.fb1 || ''}" placeholder="فيدباك 1" id="fb1-${item.rowId}" disabled><br>
+              <input type="text" value="${item.fb2 || ''}" placeholder="فيدباك 2" id="fb2-${item.rowId}" disabled style="margin-top: 4px;">
+            </td>
+            <td>
+              <button class="edit-btn" id="btn-${item.rowId}" onclick="toggleEdit(${item.rowId})">تعديل ✏️</button>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+      } else {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #64748b;">لا توجد سجلات حالية.</td></tr>`;
+      }
+    };
+
+    const params = new URLSearchParams({
+      action: "getLeads",
+      empCode: currentEmpCode,
+      role: currentRole
+    }).toString();
+
+    callAPI(params, "handleGetLeads");
+  }
+
+  // زر تعديل / حفظ السجل في الجدول
+  function toggleEdit(rowId) {
+    const btn = document.getElementById(`btn-${rowId}`);
+    const inputs = document.querySelectorAll(`#name-${rowId}, #phone-${rowId}, #address-${rowId}, #status-${rowId}, #date-${rowId}, #fb1-${rowId}, #fb2-${rowId}`);
+    
+    if (btn.innerText.includes("تعديل")) {
+      inputs.forEach(el => el.disabled = false);
+      btn.innerText = "حفظ 💾";
+      btn.style.background = "#22c55e";
+    } else {
+      inputs.forEach(el => el.disabled = true);
+      btn.innerText = "تعديل ✏️";
+      btn.style.background = "#f59e0b";
+
+      window.handleUpdateResponse = function(data) {
+        alert("تم تحديث البيانات بنجاح!");
+        loadLeads();
+      };
+
+      const params = new URLSearchParams({
+        action: "updateLead",
+        rowId: rowId,
+        name: document.getElementById(`name-${rowId}`).value,
+        phone: document.getElementById(`phone-${rowId}`).value,
+        address: document.getElementById(`address-${rowId}`).value,
+        status: document.getElementById(`status-${rowId}`).value,
+        callDate: document.getElementById(`date-${rowId}`).value,
+        fb1: document.getElementById(`fb1-${rowId}`).value,
+        fb2: document.getElementById(`fb2-${rowId}`).value,
+        fb3: ""
+      }).toString();
+
+      callAPI(params, "handleUpdateResponse");
+    }
+  }
+
+  // التحكم بإظهار وإخفاء الجدول وتغيير المظهر والشكل للزر
+  function toggleView() {
+    const tableCard = document.getElementById("tableCard");
+    const toggleBtn = document.getElementById("toggleBtn");
+    const toggleText = document.getElementById("toggleText");
+
+    if (tableCard.style.display === "none") {
+      tableCard.style.display = "block";
+      toggleBtn.classList.add("active");
+      toggleBtn.querySelector("span").innerText = "🙈";
+      toggleText.innerText = "إخفاء السجلات";
+      loadLeads();
+    } else {
+      tableCard.style.display = "none";
+      toggleBtn.classList.remove("active");
+      toggleBtn.querySelector("span").innerText = "👁️";
+      toggleText.innerText = "عرض السجلات";
+    }
+  }
+</script>
+
+</body>
+</html>
